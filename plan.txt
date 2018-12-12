@@ -1,0 +1,13 @@
+Dev plan:
+
+Murex functionalities:
+ - Create Trade Class
+ - Create counterpart class
+ - create market data class
+ - create MXDB
+    - create market data upload
+    - create trade interfaces
+    - create exchange (what is it really?)
+ - create Datamart
+    - create feeder functionality
+    - create extraction functionality
