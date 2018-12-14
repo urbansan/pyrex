@@ -1,19 +1,40 @@
-class Base:
-    @classmethod
-    def __init__subclass__(cls):
-        print('siusiaki lataki')
-        for name, attr in cls.__dict__.items():
-            
-            if callable(attr):
-                setattr(cls, name, cls.checked(val))
+from collections import UserList
 
-class Under(Base):
-    def dupa(self):
-        print('in dupa')
+# def check(self):
+#     if not all(isinstance(obj, Trade) for obj in self.wrapped.data):
+#         raise ValueError('Contract elements should all be Trade instances')
+class lizd(UserList):
+    def __init_(self, *args):
+        super().__init__(*args)
+        # self._data = super().data
+        # self.data = TradeInstance(self.data)
+
+    def __getattribute__(self, name):
+        # print('in getattribute', name)
+        data = super().__getattribute__('data')
+        if not all(isinstance(obj, int) for obj in data):
+            raise ValueError('Contract elements should all be Trade instances')
+        return super().__getattribute__(name)
+
+    # def __setattribute__(self, name, val):
+    #     print('__setattribute__')
+    #     data = super().__getattribute__('data')
+    #     if not all(isinstance(obj, str) for obj in data):
+    #         raise ValueError('Contract elements should all be Trade instances')
+    #     super().__setattribute__(name, val)
+    # def __getattr__(self, name):
+    #     print('in getattr', name)
 
 
-class Now(Under):
-    pass
+l = lizd()
+from inspect import signature
+print(signature(l.__setattr__))
+print(dir(l))
 
-a = Under()
-b = Now()
+# l.append(1)
+print(l)
+
+l += [1, 2]
+l = l + l
+
+print(l)

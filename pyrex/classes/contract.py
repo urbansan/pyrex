@@ -1,6 +1,10 @@
+import sys
+import os
+sys.path.append(os.getcwd())
 from .validators import Typology, Numeric, Integer
 import collections
 import functools
+
 # TODO: what should a base trade class do:
  # - have a db handler: how to interact with a datamodel - maybe by a descriptor?
  # - have methods for PnL calculation
@@ -24,54 +28,51 @@ class Trade:
         return self.__repr__()
 
 
-class BaseContract:
-    """For Validation of elements to be type Trade"""
-    def __init__(self, *args):
-        print('init in BaseContract')
-        super().__init__(*args)
+def only_Trade_instances(cls):
+    class Wrapper:
+        def __init__(self, *args):
+            self.wrapped = cls(*args)
 
-    @staticmethod
-    def checked(func):
-        @functools.wraps(func)
-        def wrapper(self, *args, **kwargs):
-            ret_val = func(self, *args, **kwargs)
-            if not all(isinstance(obj, Trade) for obj in self.data):
+        def check(self):
+            if not all(isinstance(obj, Trade) for obj in self.wrapped.data):
                 raise ValueError('Contract elements should all be Trade instances')
-            return ret_val
-        return wrapper
 
-    @classmethod
-    def __init__subclass__(cls):
-        print('siusiaki lataki')
-        for name, attr in cls.__dict__.items():
-            
-            if callable(attr):
-                setattr(cls, name, cls.checked(val))
+        def __getattr__(self, name):
+            # print('Getting the {} of {}'.format(name, self.wrapped))
+            ret = getattr(self.wrapped, name)
+            self.check()
+            return ret
 
+        def __iadd__(self, obj):
+            self.wrapped.data.__iadd__(obj)
+            self.check()
+            return self
 
-class Contract(BaseContract, collections.UserList):
-    def __init__(self, *args):
-        super().__init__(*args)
+        def __add__(self, obj):
+            new = self.__class__(self.wrapped.data)
+            new.wrapped.data = self.wrapped.data.__add__(obj)
+            self.check()
+            return new
 
-
-    def __setitem__(self, key, item):
-        if isinstance(item, Trade):
-            super().__setitem__(key, item)
-        else:
-            raise ValueError('Can append only Trade instance')
-
-    def append(self, item):
-        if isinstance(item, Trade):
-            super().append(item)
-        else:
-            raise ValueError('Can append only Trade instance')
-
-    def extend(self, items: list):
-        if all([isinstance(item, Trade) for item in items]):
-            super().extend(items)
-        else:
-            raise ValueError('Can append only Trade instance')
+        def __iter__(self):
+            return iter(self.wrapped.data)
+        # Wrapped.__class__ = cls.__class__
+    return Wrapper
 
 
+# @only_Trade_instances
+class Contract(collections.UserList):
+    def __getattribute__(self, name):
+        # print('in getattribute', name)
+        data = super().__getattribute__('data')
+        if not all(isinstance(obj, Trade) for obj in data):
+            raise ValueError('Contract elements should all be Trade instances')
+        return super().__getattribute__(name)
 
-
+    def __setattr__(self, name, val):
+        print('__setattr__')
+        super().__setattr__(name, val)
+        data = super().__getattribute__('data')
+        if not all(isinstance(obj, Trade) for obj in data):
+            raise ValueError('Contract elements should all be Trade instances')
+        
