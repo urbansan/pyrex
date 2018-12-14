@@ -4,7 +4,7 @@ import unittest
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 from pyrex import Trade, Contract
-from pyrex.classes.contract import TradeList
+from pyrex.classes.contract import TradeList, TradeFactory
 
 # print(__file__)
 
@@ -26,6 +26,22 @@ class TestTradeInit(unittest.TestCase):
         Trade('spot', rate=0.1, nominal='10000.0')
         with self.assertRaises(ValueError):
             Trade('spot', rate='random_string', nominal='10000.0')
+
+
+class TestTradeFactory(unittest.TestCase):
+
+    def test_create_spot(self):
+        spot = TradeFactory('spot', nominal=1000, currency='eur')
+        self.assertIsInstance(spot, Trade)
+
+    def test_create_outright(self):
+        outright = TradeFactory('outright', nominal=1000, currency='eur')
+        self.assertIsInstance(outright, Trade)
+
+    def test_raises(self):
+        with self.assertRaises(ValueError):
+            TradeFactory('typology does not exist')
+
 
 
 class TestTradeList(unittest.TestCase):

@@ -27,6 +27,10 @@ class Trade:
         return self.__repr__()
 
 
+class TradeFactory:
+    pass
+
+
 class TradeList(collections.UserList):
     def __getattribute__(self, name):
         data = super().__getattribute__('data')
