@@ -1,2 +1,2 @@
 from .classes.contract import Trade, Contract
-from .classes import validators
+from .classes import validators, typologies

@@ -1,10 +1,7 @@
-from classes.contract import Contract, Trade
+from classes.contract import Contract, Trade, TradeList
 
-c = Contract()
-# print(dir(c))
-t = Trade('spot', 1, 1)
-c.extend([t, t])
-# c.__iadd__([t, t])
+t = TradeList(static_type=int)
 
-c = c + [t, t]
-print(c.data)
+t.append(1)
+t.append('dupa')
+print(t.data)

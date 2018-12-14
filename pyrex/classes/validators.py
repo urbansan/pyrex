@@ -1,3 +1,6 @@
+import collections
+
+
 class Typology:
     _typology_list = [
         'spot',
@@ -56,3 +59,4 @@ class Integer:
 
     def __str__(self):
         return self.__repr__()
+
