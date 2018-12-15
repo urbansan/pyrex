@@ -27,8 +27,6 @@ class Trade:
         return self.__repr__()
 
 
-class TradeFactory:
-    pass
 
 
 class TradeList(collections.UserList):
@@ -56,3 +54,7 @@ class Contract:
 
     def __str__(self):
         return self.__repr__()
+
+
+class ContractFactory:
+    pass

@@ -5,8 +5,9 @@ sys.path.append(os.path.join(os.getcwd(), '../..'))
 from pyrex import validators
 
 class Dummy:
-    typology = validators.Typology()
-    numeric = validators.Numeric()
+    def __init__(self):
+        self.typology = validators.Typology()
+        self.numeric = validators.Numeric()
 
 
 class TestTradeValidators(unittest.TestCase):

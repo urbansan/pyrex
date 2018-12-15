@@ -7,7 +7,7 @@ class Typology:
         'outright'
     ]
 
-    def __init__(self, name):
+    def __init__(self, name=None):
         self.__set__('', name)
 
     def __set__(self, obj, value):
