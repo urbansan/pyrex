@@ -18,14 +18,14 @@ class TestTradeInit(unittest.TestCase):
 
     def test_typology_not_in_list(self):
         with self.assertRaises(ValueError):
-            Trade('hadouken', rate=0.1, nominal=10_100_999)
+            Trade('hadouken', 'eur', rate=0.1, nominal=10_100_999)
 
     def test_spot_init(self):
-        Trade('spot', rate=0.1, nominal=10_100_999)
-        Trade('spot', rate='0.1', nominal='10000')
-        Trade('spot', rate=0.1, nominal='10000.0')
+        Trade('spot', currency='eur', rate=0.1, nominal=10_100_999)
+        Trade('spot', currency='eur', rate='0.1', nominal='10000')
+        Trade('spot', currency='eur', rate=0.1, nominal='10000.0')
         with self.assertRaises(ValueError):
-            Trade('spot', rate='random_string', nominal='10000.0')
+            Trade('spot', currency='eur', rate='random_string', nominal='10000.0')
 
 
 class TestContractFactory(unittest.TestCase):
@@ -47,7 +47,7 @@ class TestContractFactory(unittest.TestCase):
 class TestTradeList(unittest.TestCase):
 
     def setUp(self):
-        self.trades = [Trade('spot', 10, 20), Trade('spot', 20, 10), Trade('outright', 11, 10)]
+        self.trades = [Trade('spot', 'eur', 10, 20), Trade('spot', 'eur', 20, 10), Trade('outright', 'eur', 11, 10)]
         self.random_list = [1, 2, 3, 'trade']
         self.trade_list = TradeList()
 

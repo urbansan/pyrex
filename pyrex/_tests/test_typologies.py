@@ -15,22 +15,22 @@ class TestTypologies(unittest.TestCase):
         pass
 
     def test_fx_swap_init(self):
-        fx1 = typologies.fx_swap('eur', 'pln', 1000, 4800, dt.now() + td(days=1))
+        fx1 = typologies.fx_swap('eur', 4800, 'pln', 1000, dt.now() + td(days=1))
         self.assertEqual(len(fx1.trades), 2)
         self.assertEqual(fx1.trades[0].typology, 'spot')
         self.assertEqual(fx1.trades[1].typology, 'spot')
 
-        fx1 = typologies.fx_swap('eur', 'pln', 1000, 4800, dt.now() + td(days=2))
+        fx1 = typologies.fx_swap('eur', 4800, 'pln', 1000, dt.now() + td(days=2))
         self.assertEqual(len(fx1.trades), 2)
         self.assertEqual(fx1.trades[0].typology, 'spot')
         self.assertEqual(fx1.trades[1].typology, 'spot')
 
-        fx1 = typologies.fx_swap('eur', 'pln', 1000, 4800, dt.now() + td(days=20))
+        fx1 = typologies.fx_swap('eur', 4800, 'pln', 1000, dt.now() + td(days=20))
         self.assertEqual(len(fx1.trades), 2)
         self.assertEqual(fx1.trades[0].typology, 'spot')
         self.assertEqual(fx1.trades[1].typology, 'outright')
 
-        fx1 = typologies.fx_swap('eur', 'pln', 1000, 4800,
+        fx1 = typologies.fx_swap('eur', 4800, 'pln', 1000,
                                  dt.now() + td(days=20),
                                  delayed_start=dt.now() + td(days=10))
         self.assertEqual(len(fx1.trades), 2)

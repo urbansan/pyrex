@@ -4,10 +4,10 @@ import unittest
 sys.path.append(os.path.join(os.getcwd(), '../..'))
 from pyrex import validators
 
+
 class Dummy:
-    def __init__(self):
-        self.typology = validators.Typology()
-        self.numeric = validators.Numeric()
+    typology = validators.Typology('typology')
+    numeric = validators.Numeric('numeric')
 
 
 class TestTradeValidators(unittest.TestCase):
@@ -41,6 +41,13 @@ class TestTradeValidators(unittest.TestCase):
     def test_Numeric_raises(self):
         with self.assertRaises(ValueError):
             self.test_object.numeric = 'siemano'
+
+    def test_double_dummy(self):
+        new_obj = Dummy()
+        new_obj.numeric = 10
+        self.test_object.numeric = 20
+        self.assertEqual(new_obj.numeric, 10)
+        self.assertEqual(self.test_object.numeric, 20)
 
 if __name__ == '__main__':
     unittest.main()

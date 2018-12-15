@@ -1,62 +1,44 @@
 import collections
 
 
-class Typology:
+class BaseDescriptor:
+    def __init__(self, name):
+        self.name = name + '__'
+
+    def __get__(self, instance, class_):
+        return getattr(instance, self.name)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class Typology(BaseDescriptor):
     _typology_list = [
         'spot',
         'outright'
     ]
 
-    def __init__(self, name=None):
-        self.__set__('', name)
-
-    def __set__(self, obj, value):
-
+    def __set__(self, instance, value):
         if isinstance(value, str) and value in self._typology_list:
-            self._name = value
-            return value
+            setattr(instance, self.name, value)
         else:
             raise ValueError('Incorrect typology')
 
-    def __get__(self, obj, value=None):
-        return self._name
+    def __repr__(self):
+        return 'Typology() field'
+
+
+class Numeric(BaseDescriptor):
+    def __set__(self, instance, value):
+        setattr(instance, self.name, float(value))
 
     def __repr__(self):
-        return f'{self._name}'
+        return 'Numeric() field'
 
-    def __str__(self):
-        return self.__repr__()
 
-class Numeric:
-    def __init__(self, initial_value=0):
-        self._value = float(initial_value)
-
-    def __set__(self, obj, value):
-        self._value = float(value)
-
-    def __get__(self, obj, value=None):
-        return self._value
+class Integer(BaseDescriptor):
+    def __set__(self, instance, value):
+        setattr(instance, self.name, int(value))
 
     def __repr__(self):
-        return f'{self._value}'
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class Integer:
-    def __init__(self, initial_value=0):
-        self._value = int(initial_value)
-
-    def __set__(self, obj, value):
-        self._value = int(value)
-
-    def __get__(self, obj, value=None):
-        return self._value
-
-    def __repr__(self):
-        return f'{self._value}'
-
-    def __str__(self):
-        return self.__repr__()
-
+        return 'Integer() field'

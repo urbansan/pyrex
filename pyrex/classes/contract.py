@@ -13,20 +13,22 @@ import functools
 
 class Trade:
     _counter = iter(range(999999999))
+    typology = Typology('typology')
+    rate = Numeric('rate')
+    nominal = Numeric('nominal')
+    nb = Integer('nb')
 
-    def __init__(self, typology, rate, nominal):
-        self.typology = Typology(typology)
-        self.rate = Numeric(rate)
-        self.nominal = Numeric(nominal)
-        self.nb = Integer(next(self.__class__._counter))
+    def __init__(self, typology, currency, nominal, rate):
+        self.typology = typology
+        self.rate = rate
+        self.nominal = nominal
+        self.nb = next(self.__class__._counter)
 
     def __repr__(self):
         return f"<Trade('{self.typology}', '{self.rate}', '{self.nominal}): {self.nb}>"
 
     def __str__(self):
         return self.__repr__()
-
-
 
 
 class TradeList(collections.UserList):
@@ -45,9 +47,11 @@ class TradeList(collections.UserList):
 
 class Contract:
     _counter = iter(range(999999999))
+    cnt_nb = Integer('cnt_nb')
 
     def __init__(self, cnt_typology):
-        self.cnt_nb = Integer(next(self.__class__._counter))
+        self.cnt_nb = next(self.__class__._counter)
+        self.trades = TradeList()
 
     def __repr__(self):
         return f"<Contract('{self.cnt_typology}): {self.cnt_.nb}>"
