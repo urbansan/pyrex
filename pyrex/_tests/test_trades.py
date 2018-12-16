@@ -3,7 +3,7 @@ import sys
 import unittest
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from pyrex.classes.trades import TradeFactory, typologies
+from pyrex.classes.trades import TradeFactory, typologies, TradeList
 from datetime import datetime as dt, timedelta as td
 
 
@@ -42,9 +42,12 @@ class TestTradeFactory(unittest.TestCase):
 
 
 class TestTradeList(unittest.TestCase):
-
     def setUp(self):
-        self.trades = [TradeFactory('spot', 'eur', 10, 20), TradeFactory('spot', 'eur', 20, 10), TradeFactory('outright', 'eur', 11, 10)]
+        self.trades = [
+            TradeFactory('spot', 'eur', 10, 20),
+            TradeFactory('spot', 'eur', 20, 10),
+            TradeFactory('outright', 'eur', 11, 10)
+        ]
         self.random_list = [1, 2, 3, 'trade']
         self.trade_list = TradeList()
 

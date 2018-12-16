@@ -1,23 +1,21 @@
 import sys
 import os
-from .validators import Typology, Numeric, Integer
-from .trades import TradeList
+from .validators import Typology, Numeric, Integer, ContractTypology
+from .trades import TradeList, TradeFactory
 import collections
 import functools
-
-# TODO: what should a base trade class do:
- # - have a db handler: how to interact with a datamodel - maybe by a descriptor?
- # - have methods for PnL calculation
- # - have a flex interface
+import abc
 
 
 
-class Contract:
+class Contract(metaclass=abc.ABCMeta):
     _counter = iter(range(100000000, 999999999))
-    cnt_nb = Integer('cnt_nb')
+    nb = Integer('cnt_nb')
+    typology = ContractTypology('typology')
 
-    def __init__(self, cnt_typology):
-        self.cnt_nb = next(self.__class__._counter)
+    def __init__(self):
+        self.typology = self.__class__.__name__
+        self.nb = next(self.__class__._counter)
         self.trades = TradeList()
 
     def __repr__(self):
@@ -26,8 +24,19 @@ class Contract:
     def __str__(self):
         return self.__repr__()
 
-class cnt_typologies:
-    pass
+    @abc.abstractmethod
+    def pnl(self):
+        pass
+
+
+class contract_typologies:
+    class Spot:
+        def __init__(self, typology, currency1, nominal1, currency2, nominal2):
+            t = TradeFactory(typology, currency1, nominal1, currency2, nominal2)
+            self.trades.append(t)
+
+        def pnl(self):
+            return licz cos :)
 
 class ContractFactory:
     pass
