@@ -1,18 +1,10 @@
 import sys
 import os
-sys.path.append(os.getcwd())
-from .validators import Typology, Numeric, Integer
 import collections
-import functools
-
-# TODO: what should a base trade class do:
- # - have a db handler: how to interact with a datamodel - maybe by a descriptor?
- # - have methods for PnL calculation
- # - have a flex interface
-
+from .validators import Typology, Numeric, Integer
 
 class Trade:
-    _counter = iter(range(999999999))
+    _counter = iter(range(100000000, 999999999))
     typology = Typology('typology')
     rate = Numeric('rate')
     nominal = Numeric('nominal')
@@ -31,6 +23,14 @@ class Trade:
         return self.__repr__()
 
 
+class typologies:
+    pass
+
+
+class TradeFactory:
+    pass
+
+
 class TradeList(collections.UserList):
     def __getattribute__(self, name):
         data = super().__getattribute__('data')
@@ -44,21 +44,3 @@ class TradeList(collections.UserList):
         if not all(isinstance(obj, Trade) for obj in data):
             raise ValueError('Contract elements should all be Trade instances')
 
-
-class Contract:
-    _counter = iter(range(999999999))
-    cnt_nb = Integer('cnt_nb')
-
-    def __init__(self, cnt_typology):
-        self.cnt_nb = next(self.__class__._counter)
-        self.trades = TradeList()
-
-    def __repr__(self):
-        return f"<Contract('{self.cnt_typology}): {self.cnt_.nb}>"
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class ContractFactory:
-    pass

@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 sys.path.append(os.path.join(os.getcwd(), '../..'))
-from pyrex import validators
+from pyrex.classes import validators
 
 
 class Dummy:
