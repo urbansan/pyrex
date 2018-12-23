@@ -1,2 +1,2 @@
 # pyrex
-OOP training with python Murex simulation
+OOP training with python Maurex simulation
