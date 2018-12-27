@@ -1,89 +1,79 @@
-import collections
+"""Validators based on Descriptor protocol"""
+from abc import ABCMeta, abstractmethod
 
 
-class BaseDescriptor:
-    def __init__(self, name):
-        self.name = name + '__'
-
-    def __get__(self, instance, class_):
-        return getattr(instance, self.name)
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class Typology(BaseDescriptor):
-    _typology_list = [
-        'spot',
-        'outright'
-    ]
+class BaseValidator(metaclass=ABCMeta):
+    def __set_name__(self, owner, name):
+        self.property_name = f'_{type(self).__name__}_{name}'
 
     def __set__(self, instance, value):
+        checked_value = self.check(value)
+        setattr(instance, self.property_name, checked_value)
+
+    def __get__(self, instance, owner):
+        return getattr(instance, self.property_name)
+
+    def __repr__(self):
+        return f'{type(self).__name__}() field'
+
+    @abstractmethod
+    def check(self, value):
+        """Tries to check and convert types if possible. In other casses should throw and exception"""
+        return value
+
+
+class Typology(BaseValidator):
+    _typology_list = [
+        'spot',
+        'outright']
+
+    def check(self, value):
         if isinstance(value, str) and value in self._typology_list:
-            setattr(instance, self.name, value)
+            return value
         else:
             raise ValueError('Incorrect typology')
 
-    def __repr__(self):
-        return 'Typology() field'
 
-
-class ContractTypology(BaseDescriptor):
+class ContractTypology(BaseValidator):
     _typology_list = [
         'spot',
         'outright',
-        'fx_swap'
-    ]
+        'fx_swap']
 
-    def __set__(self, instance, value):
+    def check(self, value):
         if isinstance(value, str) and value in self._typology_list:
-            setattr(instance, self.name, value)
+            return value
         else:
             raise ValueError('Incorrect typology')
 
-    def __repr__(self):
-        return 'ContractTypology() field'
-        
 
-class Numeric(BaseDescriptor):
-    def __set__(self, instance, value):
-        setattr(instance, self.name, float(value))
-
-    def __repr__(self):
-        return 'Numeric() field'
+class Numeric(BaseValidator):
+    def check(self, value):
+        return float(value)
 
 
-class Integer(BaseDescriptor):
-    def __set__(self, instance, value):
-        setattr(instance, self.name, int(value))
+class Integer(BaseValidator):
+    def check(self, value):
+        return int(value)
 
-    def __repr__(self):
-        return 'Integer() field'
 
-class Date(BaseDescriptor):
-    def __set__(self, instance, value):
+class Date(BaseValidator):
+    def check(self, value):
         from datetime import date
         if isinstance(value, date):
-            setattr(instance, self.name, int(value))
+            return value
         else:
-            raise ValueError('Datetime value required for Date field')
-
-    def __repr__(self):
-        return 'Date() field'
+            raise ValueError('Date field required a Datetime.Date type')
 
 
-class Currency(BaseDescriptor):
+class Currency(BaseValidator):
     _currencies = [
         'eur',
         'usd',
-        'pln'
-    ]
+        'pln']
 
-    def __set__(self, instance, value):
+    def check(self, value):
         if isinstance(value, str) and value in self._currencies:
-            setattr(instance, self.name, int(value))
+            return value
         else:
             raise ValueError(f'Currency abbreviation not recognized: {str(value)}')
-
-    def __repr__(self):
-        return 'Date() field'
