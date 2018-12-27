@@ -6,8 +6,8 @@ from pyrex.classes import validators
 
 
 class Dummy:
-    typology = validators.Typology('typology')
-    numeric = validators.Numeric('numeric')
+    typology = validators.Typology()
+    numeric = validators.Numeric()
 
 
 class TestTradeValidators(unittest.TestCase):
@@ -17,6 +17,20 @@ class TestTradeValidators(unittest.TestCase):
 
     def tearDown(self):
         del self.test_object
+
+    def test_property_isolation(self):
+        test_object2 = Dummy()
+        test_object2.typology = 'spot'
+        self.test_object.typology = 'outright'
+        self.assertNotEqual(test_object2.typology, self.test_object.typology)
+        self.assertEqual(test_object2.typology, 'spot')
+        self.assertEqual(self.test_object.typology, 'outright')
+
+        test_object2.numeric = 200.0
+        self.test_object.numeric = -20
+        self.assertNotEqual(test_object2.numeric, self.test_object.numeric)
+        self.assertEqual(test_object2.numeric, 200.0)
+        self.assertEqual(self.test_object.numeric, -20)
 
     def test_Typology(self):
         self.test_object.typology = 'spot'
@@ -42,12 +56,6 @@ class TestTradeValidators(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.test_object.numeric = 'siemano'
 
-    def test_double_dummy(self):
-        new_obj = Dummy()
-        new_obj.numeric = 10
-        self.test_object.numeric = 20
-        self.assertEqual(new_obj.numeric, 10)
-        self.assertEqual(self.test_object.numeric, 20)
 
 if __name__ == '__main__':
     unittest.main()
