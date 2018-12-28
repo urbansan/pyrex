@@ -18,7 +18,7 @@ class BaseValidator(metaclass=ABCMeta):
 
     @abstractmethod
     def check(self, value):
-        """Tries to check and convert types if possible. In other casses should throw and exception"""
+        """Tries to check and convert types if possible. Should throw and exception in other cases"""
         return value
 
 
@@ -31,7 +31,7 @@ class Typology(BaseValidator):
         if isinstance(value, str) and value in self._typology_list:
             return value
         else:
-            raise ValueError('Incorrect typology')
+            raise ValueError(f'Incorrect typology {value}')
 
 
 class ContractTypology(BaseValidator):
@@ -63,7 +63,7 @@ class Date(BaseValidator):
         if isinstance(value, date):
             return value
         else:
-            raise ValueError('Date field required a Datetime.Date type')
+            raise ValueError(f'Date field required a Datetime.Date type not {type(value)}.')
 
 
 class Currency(BaseValidator):

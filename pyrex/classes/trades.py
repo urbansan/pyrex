@@ -7,15 +7,13 @@ import abc
 
 class Trade(metaclass=abc.ABCMeta):
     _counter = iter(range(100000000, 999999999))
-    typology = Typology('typology')
-    nb = Integer('nb')
+    nb = Integer()
 
     def __init__(self):
-        self.typology = self.__class__.__name__
-        self.nb = next(self.__class__._counter)
+        self.nb = next(type(self)._counter)
 
     def __repr__(self):
-        return f"<Trade('{self.typology}': {self.nb}>"
+        return f"<Trade('{type(self).__name__}': {self.nb}>"
 
     def __str__(self):
         return self.__repr__()
@@ -27,50 +25,68 @@ class Trade(metaclass=abc.ABCMeta):
 
 class typologies:
     class Spot(Trade):
-        currency1 = Currency('currency1')
-        nominal1 = Numeric('nominal1')
-        currency2 = Currency('currency1')
-        nominal2 = Numeric('nominal2')
-        maturity = Date('maturity')
+        currency1 = Currency()
+        nominal1 = Numeric()
+        currency2 = Currency()
+        nominal2 = Numeric()
+        start = Date()
+        maturity = Date()
 
-        def __init__(self, currency1, nominal1, currency2, nominal2):
+        def __init__(self, currency1, currency2, nominal1, nominal2, start=date.today()):
             super().__init__()
             self.currency1 = currency1
             self.nominal1 = nominal1
             self.currency2 = currency2
             self.nominal2 = nominal2
-            self.maturity = date.today() + td(days=2)
+            self.start = start
+            self.maturity = start + td(days=2)
 
         def rate(self):
             return self.nominal2 / self.nominal1
 
 
     class Outright(Trade):
-        currency1 = Currency('currency1')
-        nominal1 = Numeric('nominal1')
-        currency2 = Currency('currency1')
-        nominal2 = Numeric('nominal2')
-        maturity = Date('maturity')
+        currency1 = Currency()
+        nominal1 = Numeric()
+        currency2 = Currency()
+        nominal2 = Numeric()
+        start = Date()
+        maturity = Date()
 
-        def __init__(self, currency1, nominal1, currency2, nominal2, maturity):
+        def __init__(self, currency1, currency2, nominal1, nominal2, start, maturity):
             super().__init__()
             self.currency1 = currency1
             self.nominal1 = nominal1
             self.currency2 = currency2
             self.nominal2 = nominal2
+            self.start = start
             self.maturity = maturity
+
 
         def rate(self):
             return self.nominal2 / self.nominal1
 
+def get_trade(
+        typology,
+        currency1=None,
+        currency2=None,
+        nominal1=None,
+        nominal2=None,
+        start=date.today(),
+        maturity=None,
+        rate = None):
+    """Trade factory"""
 
-def TradeFactory(typology, currency1, nominal1, currency2, nominal2, maturity=date.today()):
     if typology.lower() == 'spot':
-        return typologies.Spot(currency1, nominal1, currency2, nominal2)
-    if typology.lower() == 'outright':
-        return typologies.Outright(currency1, nominal1, currency2, nominal2, maturity)
+        return typologies.Spot(currency1, currency2, nominal1, nominal2, start)
+    elif typology.lower() == 'outright' \
+            and isinstance(maturity, date) \
+            and maturity - start <= td(days=2):
+        return typologies.Spot(currency1, currency2, nominal1, nominal2, start)
+    elif typology.lower() == 'outright':
+        return typologies.Outright(currency1, currency2, nominal1, nominal2, start, maturity)
     else:
-        raise ValueError(f'Typology {typology} does not exist')
+        raise ValueError(f'Typology {typology} does not exist or argument confitions are invalid')
 
 
 class TradeList(collections.UserList):

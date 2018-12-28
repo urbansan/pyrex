@@ -4,7 +4,7 @@ import unittest
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 from pyrex.classes.trades import get_trade, typologies, TradeList
-from datetime import datetime as dt, timedelta as td
+from datetime import date, timedelta as td
 
 
 class TestTradeFactory(unittest.TestCase):
@@ -26,13 +26,19 @@ class TestTradeFactory(unittest.TestCase):
             get_trade('spot', 'eur', 'random_string', '10000.0', 1022314)
 
     def test_outright_init(self):
-        maturity =  dt.now() + td(days=7)
+        maturity = date.today() + td(days=7)
         t1 = get_trade('outright', 'eur', 'pln', 10_100_999, 20_230_21, maturity=maturity)
         self.assertIsInstance(t1, typologies.Outright)
         t2 = get_trade('outright', 'eur', 'pln', '10000', 10_21032, maturity=maturity)
         self.assertIsInstance(t2, typologies.Outright)
+        t3 = get_trade('outright', 'eur', 'pln', '10000', 10_21032, maturity=date.today() + td(days=2))
+        self.assertIsInstance(t3, typologies.Spot)
+        t4 = get_trade('outright', 'eur', 'pln', '10000', 10_21032, maturity=date.today() + td(days=1))
+        self.assertIsInstance(t4, typologies.Spot)
+        t5 = get_trade('outright', 'eur', 'pln', '10000', 10_21032, maturity=date.today())
+        self.assertIsInstance(t5, typologies.Spot)
         with self.assertRaises(ValueError):
-            get_trade('outright', 'eur', 'pln', 10_100_999, 20_230_21, maturity=maturity)
+            get_trade('outright', 'some_error', 'pln', 10_100_999, 20_230_21, maturity=maturity)
 
 
 class TestTradeList(unittest.TestCase):
@@ -40,7 +46,7 @@ class TestTradeList(unittest.TestCase):
         self.trades = [
             get_trade('spot', 'eur', 'pln', 10, 20),
             get_trade('spot', 'pln', 'eur', 20, 10),
-            get_trade('outright', 'eur', 'pln', 11, 10)
+            get_trade('outright', 'eur', 'pln', 11, 10, maturity=date.today() + td(days=7))
         ]
         self.random_list = [1, 2, 3, 'trade']
         self.trade_list = TradeList()
