@@ -1,0 +1,1 @@
+<p>Lubimy {{ title }}</p>

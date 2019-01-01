@@ -3,9 +3,9 @@ import os
 import collections
 from .validators import Typology, Numeric, Integer, Currency, Date
 from datetime import datetime as dt, date, timedelta as td
-import abc
+from abc import ABCMeta, abstractmethod
 
-class Trade(metaclass=abc.ABCMeta):
+class Trade(metaclass=ABCMeta):
     _counter = iter(range(100000000, 999999999))
     nb = Integer()
 
@@ -18,7 +18,12 @@ class Trade(metaclass=abc.ABCMeta):
     def __str__(self):
         return self.__repr__()
 
-    @abc.abstractmethod
+    # @classmethod
+    # @abstractmethod
+    # def from_factory_kwargs(cls, **kwargs):
+    #     pass
+
+    @abstractmethod
     def rate(self):
         pass
 
@@ -77,6 +82,7 @@ def get_trade(
         rate = None):
     """Trade factory"""
 
+
     if typology.lower() == 'spot':
         return typologies.Spot(currency1, currency2, nominal1, nominal2, start)
     elif typology.lower() == 'outright' \
@@ -86,7 +92,7 @@ def get_trade(
     elif typology.lower() == 'outright':
         return typologies.Outright(currency1, currency2, nominal1, nominal2, start, maturity)
     else:
-        raise ValueError(f'Typology {typology} does not exist or argument confitions are invalid')
+        raise ValueError(f'Typology {typology} does not exist or argument conditions are invalid')
 
 
 class TradeList(collections.UserList):
